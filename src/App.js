@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
+import 'bootstrap/dist/css/bootstrap.min.css';
 const ENDPOINT = "https://backend-websocket-timer.herokuapp.com/:7768";
 
 function App() {
@@ -13,9 +14,9 @@ function App() {
   }, []);
 
   return (
-    <p>
+    <h3 className="m-5">
       It's <time dateTime={response}>{response}</time>
-    </p>
+    </h3>
   );
 }
 
