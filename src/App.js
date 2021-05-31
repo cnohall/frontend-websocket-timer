@@ -3,9 +3,9 @@ import socketIOClient from "socket.io-client";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Container, Row } from  'react-bootstrap';
 //Production
-// const ENDPOINT = "https://backend-websocket-timer.herokuapp.com/";
+const ENDPOINT = "https://backend-websocket-timer.herokuapp.com/";
 //Local Testing
-const ENDPOINT = "http://localhost:4001";
+// const ENDPOINT = "http://localhost:4001";
 const socket = socketIOClient(ENDPOINT, {transports: ['websocket']});
 
 function App() {
