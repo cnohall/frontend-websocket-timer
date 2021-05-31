@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import 'bootstrap/dist/css/bootstrap.min.css';
-const ENDPOINT = "https://backend-websocket-timer.herokuapp.com/:7768";
+const ENDPOINT = "https://backend-websocket-timer.herokuapp.com/";
 
 function App() {
   const [response, setResponse] = useState("");
