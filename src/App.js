@@ -19,6 +19,7 @@ function App() {
 
   const [startTime, setStartTime] = useState("Not started yet");
   const [shouldEnd, setShouldEnd] = useState("");
+  const [startButtonDisabled, setStartButtonDisabled] = useState(false);
 
   useEffect(() => {
     socket.on("FromAPI", data => {
@@ -44,6 +45,16 @@ function App() {
     });
   }, []);
 
+  const handleStartButtonClick = () => {
+    setStartButtonDisabled(true);
+    socket.emit("start");
+  } 
+
+  const handleStopButtonClick = () => {
+    setStartButtonDisabled(false);
+    socket.emit("stop");
+  } 
+
   return (
     <Container>
       <h4 className="m-5 text-center">
@@ -60,8 +71,8 @@ function App() {
         <TimeTable time={isoStartingTime}/>
       }
       <Row className="justify-content-center">
-        <Button onClick={ () => socket.emit("start")} className='mx-3 btn-lg'>Start</Button>
-        <Button onClick={ () => socket.emit("stop")} className='mx-3 btn-lg'>Stop</Button>
+        <Button disabled={startButtonDisabled} onClick={ () => handleStartButtonClick()} className='mx-3 btn-lg'>Start</Button>
+        <Button onClick={ () => handleStopButtonClick()} className='mx-3 btn-lg'>Stop</Button>
       </Row>
     </Container>
   );
