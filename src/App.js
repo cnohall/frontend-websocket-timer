@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Container, Row } from  'react-bootstrap';
+import TimeTable from './view/time-table';
+
+
 //Production
 const ENDPOINT = "https://backend-websocket-timer.herokuapp.com/";
 //Local Testing
@@ -15,6 +18,8 @@ const hour = 60 * min;
 
 function App() {
   const [response, setResponse] = useState("");
+  const [isoStartingTime, setIsoStartingTime] = useState();
+
   const [startTime, setStartTime] = useState("Not started yet");
   const [shouldEnd, setShouldEnd] = useState("");
 
@@ -31,6 +36,8 @@ function App() {
       const end = new Date((currentTime/1000 * 1000) + meetingLength).toISOString().substr(11, 8)
       setStartTime("The meeting started at " + start);
       setShouldEnd("The meeting should end at " + end);
+      setIsoStartingTime(currentTime);
+
     });
     socket.on("stop", data => {
       setStartTime("The meeting ended");
@@ -49,6 +56,10 @@ function App() {
       <h4 className="mb-5 text-center">
         <time dateTime={shouldEnd}>{shouldEnd}</time>
       </h4>
+      {
+        isoStartingTime &&
+        <TimeTable time={isoStartingTime}/>
+      }
       <Row className="justify-content-center">
         <Button onClick={ () => socket.emit("start")} className='mx-3 btn-lg'>Start</Button>
         <Button onClick={ () => socket.emit("stop")} className='mx-3 btn-lg'>Stop</Button>
