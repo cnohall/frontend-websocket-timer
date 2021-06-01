@@ -5,10 +5,7 @@ import {Button, Container, Row } from  'react-bootstrap';
 import TimeTable from './view/time-table';
 
 
-//Production
-const ENDPOINT = "https://backend-websocket-timer.herokuapp.com/";
-//Local Testing
-// const ENDPOINT = "http://localhost:4001";
+const ENDPOINT = process.env.REACT_APP_ENDPOINT;
 const socket = socketIOClient(ENDPOINT, {transports: ['websocket']});
 
 //Time variables
