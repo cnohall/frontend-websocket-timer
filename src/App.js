@@ -14,7 +14,8 @@ const minute = 60 * second;
 const hour = 60 * minute;
 
 function App() {
-  const [response, setResponse] = useState("");
+  const [time, setTime] = useState("");
+  const [formatedTime, setFormatedTime] = useState("");
   const [isoStartingTime, setIsoStartingTime] = useState();
 
   const [startTime, setStartTime] = useState("Not started yet");
@@ -25,8 +26,9 @@ function App() {
     socket.on("FromAPI", data => {
       const serverTime = new Date(data);
       const localTime = new Date(serverTime/1000 * 1000 - serverTime.getTimezoneOffset() * minute);
-      const formatedTime = localTime.toISOString().substr(11, 8)
-      setResponse(formatedTime);
+      const formated = localTime.toISOString().substr(11, 8)
+      setTime(serverTime);
+      setFormatedTime(formated);
     });
     socket.on("start", data => {
       const serverTime = new Date(data);
@@ -37,13 +39,19 @@ function App() {
       setStartTime("The meeting started at " + start);
       setShouldEnd("The meeting should end at " + end);
       setIsoStartingTime(localTime);
-
     });
     socket.on("stop", data => {
       setStartTime("The meeting ended");
       setShouldEnd("");
     });
-  }, []);
+    time && setTimeout(() => {
+      setTime((new Date(time)/1000 * 1000) + second);
+      const serverTime = new Date(time);
+      const localTime = new Date(serverTime/1000 * 1000 - serverTime.getTimezoneOffset() * minute);
+      const formated = localTime.toISOString().substr(11, 8)
+      setFormatedTime(formated);
+    }, 1000);
+  }, [time]);
 
   const handleStartButtonClick = () => {
     setStartButtonDisabled(true);
@@ -55,10 +63,11 @@ function App() {
     socket.emit("stop");
   } 
 
+
   return (
     <Container>
       <h4 className="m-5 text-center">
-        <time dateTime={response}>Current time UTC: {response}</time>
+        <time dateTime={formatedTime}>Current time UTC: {formatedTime}</time>
       </h4>
       <h4 className="mx-5 text-center">
         <time dateTime={startTime}>{startTime}</time>
