@@ -5,7 +5,8 @@ const minute = 60 * second;
 
 
 function Clock(props) {
-    const [time, setTime] = useState(props.time);
+    const time = props.time;
+    const setTime = props.setTime;
     const [formatedTime, setFormatedTime] = useState("");
 
     useEffect(() => {
@@ -16,7 +17,7 @@ function Clock(props) {
             const formated = localTime.toISOString().substr(11, 8)
             setFormatedTime(formated);
         }, 1000);
-    }, [time]);
+    }, [time, setTime]);
 
     return (
         <h4 className="mt-5">

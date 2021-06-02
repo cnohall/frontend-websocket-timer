@@ -57,13 +57,13 @@ function App() {
 
   return (
     <Container>
-      <Clock time={time}/>
+      <Clock time={time} setTime={setTime}/>
       <h4 className="">
         <time dateTime={startTime}>{startTime}</time>
       </h4>
       {
         isoStartingTime &&
-        <TimeTable time={isoStartingTime}/>
+        <TimeTable isoStartingTime={isoStartingTime} time={time}/>
       }
       <h4 className="mb-5">
         <time dateTime={shouldEnd}>{shouldEnd}</time>
