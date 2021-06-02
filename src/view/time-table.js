@@ -53,7 +53,7 @@ function TimeTable(props) {
 }
 
 const calculatePartTime = (meetingStart, amount_minutes) => {
-    return "" + new Date((meetingStart/1000 * 1000) + (amount_minutes * minute)).toISOString().substr(11, 8);
+    return new Date((meetingStart/1000 * 1000) + (amount_minutes * minute)).toISOString().substr(11, 8);
 }
 
 export default TimeTable;

@@ -3,6 +3,7 @@ import socketIOClient from "socket.io-client";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Container, Row } from  'react-bootstrap';
 import TimeTable from './view/time-table';
+import Clock from './view/clock';
 
 
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
@@ -15,7 +16,6 @@ const hour = 60 * minute;
 
 function App() {
   const [time, setTime] = useState("");
-  const [formatedTime, setFormatedTime] = useState("");
   const [isoStartingTime, setIsoStartingTime] = useState();
 
   const [startTime, setStartTime] = useState("Not started yet");
@@ -24,34 +24,26 @@ function App() {
 
   useEffect(() => {
     socket.on("FromAPI", data => {
-      const serverTime = new Date(data);
-      const localTime = new Date(serverTime/1000 * 1000 - serverTime.getTimezoneOffset() * minute);
-      const formated = localTime.toISOString().substr(11, 8)
-      setTime(serverTime);
-      setFormatedTime(formated);
+      setTime(data);
     });
     socket.on("start", data => {
-      const serverTime = new Date(data);
-      const localTime = new Date(serverTime/1000 * 1000 - serverTime.getTimezoneOffset() * minute);
-      const meetingLength = hour + (45 * minute); // 105 minute or 1 hour and 45 minute
-      const start = new Date(localTime/1000 * 1000).toISOString().substr(11, 8)
-      const end = new Date((localTime/1000 * 1000) + meetingLength).toISOString().substr(11, 8)
-      setStartTime("The meeting started at " + start);
-      setShouldEnd("The meeting should end at " + end);
-      setIsoStartingTime(localTime);
+      setStartEndTime(data)
     });
     socket.on("stop", data => {
       setStartTime("The meeting ended");
       setShouldEnd("");
     });
-    time && setTimeout(() => {
-      setTime((new Date(time)/1000 * 1000) + second);
-      const serverTime = new Date(time);
-      const localTime = new Date(serverTime/1000 * 1000 - serverTime.getTimezoneOffset() * minute);
-      const formated = localTime.toISOString().substr(11, 8)
-      setFormatedTime(formated);
-    }, 1000);
   }, [time]);
+
+  const setStartEndTime = (serverTime) => {
+    const localTime = new Date(new Date(serverTime)/1000 * 1000 - new Date(serverTime).getTimezoneOffset() * minute);
+    const meetingLength = hour + (45 * minute); // 105 minute or 1 hour and 45 minute
+    const start = new Date(localTime/1000 * 1000).toISOString().substr(11, 8)
+    const end = new Date((localTime/1000 * 1000) + meetingLength).toISOString().substr(11, 8)
+    setStartTime("The meeting started at " + start);
+    setShouldEnd("The meeting should end at " + end);
+    setIsoStartingTime(localTime);
+  } 
 
   const handleStartButtonClick = () => {
     setStartButtonDisabled(true);
@@ -63,22 +55,19 @@ function App() {
     socket.emit("stop");
   } 
 
-
   return (
     <Container>
-      <h4 className="m-5 text-center">
-        <time dateTime={formatedTime}>Current time UTC: {formatedTime}</time>
-      </h4>
-      <h4 className="mx-5 text-center">
+      <Clock time={time}/>
+      <h4 className="">
         <time dateTime={startTime}>{startTime}</time>
-      </h4>
-      <h4 className="mb-5 text-center">
-        <time dateTime={shouldEnd}>{shouldEnd}</time>
       </h4>
       {
         isoStartingTime &&
         <TimeTable time={isoStartingTime}/>
       }
+      <h4 className="mb-5">
+        <time dateTime={shouldEnd}>{shouldEnd}</time>
+      </h4>
       <Row className="justify-content-center">
         <Button disabled={startButtonDisabled} onClick={ () => handleStartButtonClick()} className='mx-3 btn-lg'>Start</Button>
         <Button onClick={ () => handleStopButtonClick()} className='mx-3 btn-lg'>Stop</Button>
