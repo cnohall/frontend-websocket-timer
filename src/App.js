@@ -18,18 +18,25 @@ function App() {
   const [time, setTime] = useState("");
   const [isoStartingTime, setIsoStartingTime] = useState();
 
+  const [part, setPart] = useState();
+  
+  const [timeStarted, setTimeStarted] = useState(false);
   const [startTime, setStartTime] = useState("Not started yet");
   const [shouldEnd, setShouldEnd] = useState("");
-  const [startButtonDisabled, setStartButtonDisabled] = useState(false);
+
 
   useEffect(() => {
-    socket.on("FromAPI", data => {
-      setTime(data);
+    socket.on("connected", res => {
+      setTime(res.time);
+      setPart(res.part);
     });
-    socket.on("start", data => {
-      setStartEndTime(data)
+    socket.on("start", res => {
+      setStartEndTime(res)
     });
-    socket.on("stop", data => {
+    socket.on("nextPart", res => {
+      setPart(res)
+    });
+    socket.on("stop", res => {
       setStartTime("The meeting ended");
       setShouldEnd("");
     });
@@ -46,12 +53,16 @@ function App() {
   } 
 
   const handleStartButtonClick = () => {
-    setStartButtonDisabled(true);
-    socket.emit("start");
+    if(!timeStarted){
+      socket.emit("start");
+    } else {
+      socket.emit("nextPart");
+    }
+    setTimeStarted(true);
   } 
 
   const handleStopButtonClick = () => {
-    setStartButtonDisabled(false);
+    setTimeStarted(false);
     socket.emit("stop");
   } 
 
@@ -63,13 +74,13 @@ function App() {
       </h4>
       {
         isoStartingTime &&
-        <TimeTable isoStartingTime={isoStartingTime} time={time}/>
+        <TimeTable part={part} isoStartingTime={isoStartingTime} time={time}/>
       }
       <h4 className="mb-5">
         <time dateTime={shouldEnd}>{shouldEnd}</time>
       </h4>
       <Row className="justify-content-center">
-        <Button disabled={startButtonDisabled} onClick={ () => handleStartButtonClick()} className='mx-3 btn-lg'>Start</Button>
+        <Button onClick={ () => handleStartButtonClick()} className='mx-3 btn-lg'>{(timeStarted) ? "Next part" : "Start"}</Button>
         <Button onClick={ () => handleStopButtonClick()} className='mx-3 btn-lg'>Stop</Button>
       </Row>
     </Container>
