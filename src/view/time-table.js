@@ -31,9 +31,9 @@ function TimeTable(props) {
         <tbody>
             {meetingParts.map((part, index) => {
                 if (partsEndingTimes[index]){
-                    part.ended = new Date((new Date(partsEndingTimes[index])/1000 * 1000) - new Date(partsEndingTimes[index]).getTimezoneOffset() * minute).toISOString().substr(11, 8);
+                    part.ended = new Date(new Date(partsEndingTimes[index]) - new Date(partsEndingTimes[index]).getTimezoneOffset() * minute).toISOString().substr(11, 8);
                 } else if (partsEndingTimes.length === index) {
-                    part.ended = new Date((new Date(new Date())/1000 * 1000) - new Date(new Date()).getTimezoneOffset() * minute).toISOString().substr(11, 8);
+                    part.ended = new Date(new Date(new Date()) - new Date(new Date()).getTimezoneOffset() * minute).toISOString().substr(11, 8);
                 }
                 return (
                 <tr key={part.name}>

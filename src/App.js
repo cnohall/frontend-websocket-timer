@@ -43,9 +43,9 @@ function App() {
   }, [time]);
 
   const setStartEndTime = (serverTime) => {
-    const localTime = new Date(new Date(serverTime)/1000 * 1000 - new Date(serverTime).getTimezoneOffset() * minute);
+    const localTime = new Date(new Date(serverTime) - new Date(serverTime).getTimezoneOffset() * minute);
     const meetingLength = hour + (45 * minute); // 105 minute or 1 hour and 45 minute
-    const start = new Date(localTime/1000 * 1000).toISOString().substr(11, 8)
+    const start = new Date(localTime).toISOString().substr(11, 8)
     const end = new Date((localTime/1000 * 1000) + meetingLength).toISOString().substr(11, 8)
     setStartTime("The meeting started at " + start);
     setShouldEnd("The meeting should end at " + end);
