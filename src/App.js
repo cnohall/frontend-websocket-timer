@@ -29,6 +29,9 @@ function App() {
     socket.on("connected", res => {
       setTime(res.time);
       setPart(res.part);
+      if (res.startingtime){
+        setStartEndTime(res.startingtime);
+      }
     });
     socket.on("start", res => {
       setStartEndTime(res)
