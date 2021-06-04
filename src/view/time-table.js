@@ -9,7 +9,7 @@ const minute = 60 * second;
 function TimeTable(props) {
 
     const startingTime = new Date(props.isoStartingTime);
-    const partNumber = props.part;
+    const partsEndingTimes = props.part;
     let meetingParts = [
         {   name: "Song and Prayer",            shouldEnd: shouldStartAt(startingTime, 0),      ended: '--'},
         {   name: "Initial Comments",           shouldEnd: shouldStartAt(startingTime, 5),      ended: '--'},
@@ -30,7 +30,11 @@ function TimeTable(props) {
         </thead>
         <tbody>
             {meetingParts.map((part, index) => {
-                meetingParts[partNumber].ended = new Date((new Date(props.time)/1000 * 1000) - new Date(props.time).getTimezoneOffset() * minute).toISOString().substr(11, 8);
+                if (partsEndingTimes[index]){
+                    part.ended = new Date((new Date(partsEndingTimes[index])/1000 * 1000) - new Date(partsEndingTimes[index]).getTimezoneOffset() * minute).toISOString().substr(11, 8);
+                } else if (partsEndingTimes.length === index) {
+                    part.ended = new Date((new Date(new Date())/1000 * 1000) - new Date(new Date()).getTimezoneOffset() * minute).toISOString().substr(11, 8);
+                }
                 return (
                 <tr key={part.name}>
                     <td>{part.name}</td>
