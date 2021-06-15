@@ -20,7 +20,7 @@ function TimeTable(props) {
     ]
         
     return (
-        <Table striped bordered hover variant="dark" responsive>
+        <Table striped borderless hover variant="primary" >
         <thead>
             <tr>
                 <th>Part</th>

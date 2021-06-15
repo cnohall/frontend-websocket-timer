@@ -20,9 +20,9 @@ function Clock(props) {
     }, [time, setTime]);
 
     return (
-        <h4 className="mt-5">
+        <p className="mb-1">
             <time dateTime={formatedTime}>Current time: {formatedTime}</time>
-        </h4>
+        </p>
     );
 }
 

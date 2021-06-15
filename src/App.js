@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Button, Container, Row } from  'react-bootstrap';
+import {Button, Container, Row, Jumbotron, Card } from  'react-bootstrap';
 import TimeTable from './view/time-table';
 import Clock from './view/clock';
+import Navigationbar from "./view/navigationbar";
 
 
 const ENDPOINT = process.env.REACT_APP_ENDPOINT;
@@ -70,23 +71,35 @@ function App() {
   } 
 
   return (
-    <Container>
-      <Clock time={time} setTime={setTime}/>
-      <h4 className="">
-        <time dateTime={startTime}>{startTime}</time>
-      </h4>
-      {
-        isoStartingTime &&
-        <TimeTable part={part} isoStartingTime={isoStartingTime} time={time}/>
-      }
-      <h4 className="mb-5">
-        <time dateTime={shouldEnd}>{shouldEnd}</time>
-      </h4>
-      <Row className="justify-content-center">
-        <Button onClick={ () => handleStartButtonClick()} className='mx-3 btn-lg'>{(timeStarted) ? "Next part" : "Start"}</Button>
-        <Button onClick={ () => handleStopButtonClick()} className='mx-3 btn-lg'>Stop</Button>
-      </Row>
-    </Container>
+    <div>
+      <Navigationbar/>
+      <Jumbotron className='min-vh-100 mb-0'fluid>
+        <Container>
+        <Card className='p-4'>
+            <h1>Meeting timer</h1>
+            <p>
+              Welcome to our meeting timer that helps you to keep track on the meeting time.
+            </p>
+
+            <Clock time={time} setTime={setTime}/>
+            <p className="">
+              <time dateTime={startTime}>{startTime}</time>
+            </p>
+            {
+              isoStartingTime &&
+              <TimeTable part={part} isoStartingTime={isoStartingTime} time={time}/>
+            }
+            <p className="mb-3">
+              <time dateTime={shouldEnd}>{shouldEnd}</time>
+            </p>
+            <Row className="">
+              <Button onClick={ () => handleStartButtonClick()} className='mx-3 btn'>{(timeStarted) ? "Next part" : "Start"}</Button>
+              <Button onClick={ () => handleStopButtonClick()} className='mx-3 btn'>Stop</Button>
+            </Row>
+          </Card>
+        </Container>
+      </Jumbotron>
+    </div>
   );
 }
 
