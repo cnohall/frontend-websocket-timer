@@ -16,44 +16,41 @@ const minute = 60 * second;
 const hour = 60 * minute;
 
 function App() {
-  const [time, setTime] = useState("");
-  const [isoStartingTime, setIsoStartingTime] = useState();
-
+  const [time, setTime] = useState();
   const [part, setPart] = useState();
   
   const [timeStarted, setTimeStarted] = useState(false);
-  const [startTime, setStartTime] = useState("Not started yet");
+  const [startTime, setStartTime] = useState();
   const [shouldEnd, setShouldEnd] = useState("");
 
 
   useEffect(() => {
     socket.on("connected", res => {
-      setTime(res.time);
+      setTime(new Date(res.time).getTime());
       setPart(res.part);
-      if (res.startingtime){
+      if (new Date(res.startingtime).getTime()){
         setStartEndTime(res.startingtime);
       }
     });
     socket.on("start", res => {
-      setStartEndTime(res)
+      setStartEndTime(new Date(res).getTime() - new Date(res).getTimezoneOffset() * minute)
     });
     socket.on("nextPart", res => {
       setPart(res)
     });
     socket.on("stop", res => {
-      setStartTime("The meeting ended");
+      setStartTime();
       setShouldEnd("");
     });
   }, [time]);
 
   const setStartEndTime = (serverTime) => {
-    const localTime = new Date(new Date(serverTime) - new Date(serverTime).getTimezoneOffset() * minute);
+    const localTime = new Date(serverTime);
     const meetingLength = hour + (45 * minute); // 105 minute or 1 hour and 45 minute
-    const start = new Date(localTime).toISOString().substr(11, 8)
-    const end = new Date((localTime/1000 * 1000) + meetingLength).toISOString().substr(11, 8)
-    setStartTime("The meeting started at " + start);
+    const end = new Date(serverTime + meetingLength ).toISOString().substr(11, 8)
+    console.log(localTime)
+    setStartTime(localTime);
     setShouldEnd("The meeting should end at " + end);
-    setIsoStartingTime(localTime);
   } 
 
   const handleStartButtonClick = () => {
@@ -82,12 +79,14 @@ function App() {
             </p>
 
             <Clock time={time} setTime={setTime}/>
-            <p className="">
-              <time dateTime={startTime}>{startTime}</time>
-            </p>
             {
-              isoStartingTime &&
-              <TimeTable part={part} isoStartingTime={isoStartingTime} time={time}/>
+              startTime &&
+              <div>
+                <p className="">
+                <time dateTime={startTime}>The meeting started at {new Date(startTime).toISOString().substr(11, 8)}</time>
+                </p>
+                <TimeTable part={part} startTime={startTime} time={time}/>
+              </div>
             }
             <p className="mb-3">
               <time dateTime={shouldEnd}>{shouldEnd}</time>
