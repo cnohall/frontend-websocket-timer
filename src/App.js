@@ -18,6 +18,7 @@ const hour = 60 * minute;
 function App() {
   const [time, setTime] = useState();
   const [part, setPart] = useState();
+  const [connections, setConnections] = useState(0);
   
   const [timeStarted, setTimeStarted] = useState(false);
   const [startTime, setStartTime] = useState();
@@ -28,8 +29,12 @@ function App() {
     socket.on("connected", res => {
       setTime(new Date(res.time).getTime());
       setPart(res.part);
+      setConnections(res.connections)
       if (new Date(res.startingtime).getTime()){
         setStartEndTime(res.startingtime);
+      }
+      if (res.part.length > 0){
+        setTimeStarted(true);
       }
     });
     socket.on("start", res => {
@@ -74,9 +79,13 @@ function App() {
         <Container>
         <Card className='p-4'>
             <h1>Meeting timer</h1>
-            <p>
+            <p className='mb-0'>
               Welcome to our meeting timer that helps you to keep track on the meeting time.
             </p>
+            <p>
+              You are online together with {connections} other friends.
+            </p>
+
 
             <Clock time={time} setTime={setTime}/>
             {
