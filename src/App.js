@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import socketIOClient from "socket.io-client";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Button, Container, Row, Jumbotron, Card } from  'react-bootstrap';
@@ -24,36 +24,33 @@ function App() {
   const [startTime, setStartTime] = useState();
   const [shouldEnd, setShouldEnd] = useState("");
 
+  socket.on("connected", res => {
+    setTime(new Date(res.time).getTime());
+    setPart(res.part);
+    setConnections(res.connections)
+    if (new Date(res.startingtime).getTime()){
+      setStartEndTime(res.startingtime);
+    }
+    if (res.part.length > 0){
+      setTimeStarted(true);
+    }
+  });
+  socket.on("start", res => {
+    setStartEndTime(new Date(res).getTime() - new Date(res).getTimezoneOffset() * minute)
+  });
+  socket.on("nextPart", res => {
+    setPart(res)
+  });
+  socket.on("stop", res => {
+    setStartTime();
+    setShouldEnd("");
+  });
 
-  useEffect(() => {
-    socket.on("connected", res => {
-      setTime(new Date(res.time).getTime());
-      setPart(res.part);
-      setConnections(res.connections)
-      if (new Date(res.startingtime).getTime()){
-        setStartEndTime(res.startingtime);
-      }
-      if (res.part.length > 0){
-        setTimeStarted(true);
-      }
-    });
-    socket.on("start", res => {
-      setStartEndTime(new Date(res).getTime() - new Date(res).getTimezoneOffset() * minute)
-    });
-    socket.on("nextPart", res => {
-      setPart(res)
-    });
-    socket.on("stop", res => {
-      setStartTime();
-      setShouldEnd("");
-    });
-  }, [time]);
 
   const setStartEndTime = (serverTime) => {
     const localTime = new Date(serverTime);
     const meetingLength = hour + (45 * minute); // 105 minute or 1 hour and 45 minute
     const end = new Date(serverTime + meetingLength ).toISOString().substr(11, 8)
-    console.log(localTime)
     setStartTime(localTime);
     setShouldEnd("The meeting should end at " + end);
   } 

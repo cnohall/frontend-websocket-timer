@@ -1,5 +1,5 @@
 //Time variables
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 const second = 1000; //in milliseconds
 const minute = 60 * second; 
 
@@ -8,14 +8,12 @@ function Clock(props) {
     const setTime = props.setTime;
     const [formatedTime, setFormatedTime] = useState("");
 
-    useEffect(() => {
-        time && setTimeout(() => {
-            setTime(time + second);
-            const localTime = new Date(time - new Date(time).getTimezoneOffset() * minute);
-            const formated = localTime.toISOString().substr(11, 8)
-            setFormatedTime(formated);
-        }, 1000);
-    }, [time, setTime]);
+    time && setTimeout(() => {
+        setTime(time + second);
+        const localTime = new Date(time - new Date(time).getTimezoneOffset() * minute);
+        const formated = localTime.toISOString().substr(11, 8)
+        setFormatedTime(formated);
+    }, 1000);
 
     return (
         <p className="mb-1">

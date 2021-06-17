@@ -34,7 +34,6 @@ function TimeTable(props) {
             {meetingParts.map((part, index) => {
                 //Parts that already ended
                 if (partsEndingTimes[index]){
-                    console.log(partsEndingTimes[index]);
                     part.ended = new Date(new Date(partsEndingTimes[index]) - new Date(partsEndingTimes[index]).getTimezoneOffset() * minute).toISOString().substr(11, 8);
                 //Current part
                 } else if (partsEndingTimes.length === index) {
