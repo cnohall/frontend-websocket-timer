@@ -27,7 +27,6 @@ function App() {
   socket.on("connected", res => {
     setTime(new Date(res.time).getTime());
     setPart(res.part);
-    setConnections(res.connections)
     if (new Date(res.startingtime).getTime()){
       setStartEndTime(res.startingtime);
     }
@@ -35,6 +34,12 @@ function App() {
       setTimeStarted(true);
     }
   });
+  socket.on("connections", res => {
+    console.log(res);
+    setConnections(res)
+  });
+
+
   socket.on("start", res => {
     setStartEndTime(new Date(res).getTime() - new Date(res).getTimezoneOffset() * minute)
   });
